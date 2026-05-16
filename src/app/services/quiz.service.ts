@@ -72,7 +72,7 @@ export class QuizService {
     this.progress.set(levelNumber, newProgress);
     this.saveProgress();
 
-    return { levelNumber, score, total, passed };
+    return { levelNumber, score, total, passed, userAnswers: answers };
   }
 
   hasNextLevel(levelNumber: number): boolean {

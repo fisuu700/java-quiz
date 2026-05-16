@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { QuizService } from '../services/quiz.service';
+import { TranslateService } from '../services/translate.service';
 import { LevelData, Question } from '../models';
 
 @Component({
@@ -14,12 +15,12 @@ import { LevelData, Question } from '../models';
         <div class="quiz-header">
           <div class="quiz-meta">
             <span class="quiz-level">Level {{ levelNumber }}</span>
-            <span class="quiz-count">10 Questions</span>
+            <span class="quiz-count">{{ t('quiz.questions') }}</span>
           </div>
           <div class="progress-bar-container">
             <div class="progress-bar" [style.width.%]="progressPercent"></div>
           </div>
-          <span class="progress-text">Question {{ currentIndex + 1 }} of 10</span>
+          <span class="progress-text">{{ t('quiz.question_of') }} {{ currentIndex + 1 }} {{ t('quiz.of') }} 10</span>
         </div>
 
         <div *ngIf="level">
@@ -41,13 +42,13 @@ import { LevelData, Question } from '../models';
           </div>
 
           <div class="quiz-nav">
-            <button *ngIf="currentIndex > 0" class="btn btn-nav" (click)="goTo(currentIndex - 1)">← Previous</button>
-            <button *ngIf="currentIndex < 9" class="btn btn-nav" (click)="goTo(currentIndex + 1)">Next →</button>
-            <button *ngIf="currentIndex === 9" class="btn btn-submit" (click)="submit()">Submit Answers</button>
+            <button *ngIf="currentIndex > 0" class="btn btn-nav" (click)="goTo(currentIndex - 1)">{{ t('quiz.prev') }}</button>
+            <button *ngIf="currentIndex < 9" class="btn btn-nav" (click)="goTo(currentIndex + 1)">{{ t('quiz.next') }}</button>
+            <button *ngIf="currentIndex === 9" class="btn btn-submit" (click)="submit()">{{ t('quiz.submit') }}</button>
           </div>
         </div>
 
-        <div *ngIf="!level" class="alert alert-error">Level not found.</div>
+        <div *ngIf="!level" class="alert alert-error">{{ t('quiz.not_found') }}</div>
       </div>
     </section>
   `
@@ -63,8 +64,13 @@ export class QuizComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private quiz: QuizService
+    private quiz: QuizService,
+    public translate: TranslateService
   ) {}
+
+  t(key: string): string {
+    return this.translate.t(key);
+  }
 
   ngOnInit() {
     this.levelNumber = Number(this.route.snapshot.paramMap.get('level')) || 1;

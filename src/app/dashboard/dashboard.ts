@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { QuizService } from '../services/quiz.service';
+import { TranslateService } from '../services/translate.service';
 import { LevelData } from '../models';
 
 @Component({
@@ -11,11 +12,11 @@ import { LevelData } from '../models';
   template: `
     <section class="dashboard">
       <div class="dashboard-header">
-        <h1>Choose Your Level</h1>
-        <p>Complete each level with 70%+ to unlock the next</p>
+        <h1>{{ t('dashboard.title') }}</h1>
+        <p>{{ t('dashboard.subtitle') }}</p>
         <div class="progress-summary">
-          <span>Current Level: <strong>Level {{ unlockedLevel }}</strong></span>
-          <span>Total Levels: <strong>50</strong></span>
+          <span>{{ t('dashboard.current') }}: <strong>{{ t('dashboard.level_label') }} {{ unlockedLevel }}</strong></span>
+          <span>{{ t('dashboard.total') }}: <strong>50</strong></span>
         </div>
       </div>
 
@@ -31,21 +32,21 @@ import { LevelData } from '../models';
             {{ level.difficultyRating }}
           </div>
           <div class="level-status">
-            <span *ngIf="isCompleted(level.levelNumber)" class="status-badge status-pass">✅ Passed</span>
+            <span *ngIf="isCompleted(level.levelNumber)" class="status-badge status-pass">{{ t('dashboard.passed') }}</span>
             <span *ngIf="isUnlocked(level.levelNumber) && !isCompleted(level.levelNumber) && getAttempts(level.levelNumber) > 0"
-              class="status-badge status-fail">❌ Failed</span>
+              class="status-badge status-fail">{{ t('dashboard.failed') }}</span>
             <span *ngIf="isUnlocked(level.levelNumber) && !isCompleted(level.levelNumber) && getAttempts(level.levelNumber) === 0"
-              class="status-badge status-new">🆕 New</span>
-            <span *ngIf="!isUnlocked(level.levelNumber)" class="status-badge status-locked">🔒 Locked</span>
+              class="status-badge status-new">{{ t('dashboard.new') }}</span>
+            <span *ngIf="!isUnlocked(level.levelNumber)" class="status-badge status-locked">{{ t('dashboard.locked') }}</span>
           </div>
           <div *ngIf="getScore(level.levelNumber) > 0" class="level-score">
-            Best: {{ getScore(level.levelNumber) }}/10
+            {{ t('dashboard.best') }}: {{ getScore(level.levelNumber) }}/10
           </div>
           <a *ngIf="isUnlocked(level.levelNumber) && !isCompleted(level.levelNumber)"
-            [routerLink]="['/quiz', level.levelNumber]" class="btn btn-level">Start</a>
+            [routerLink]="['/quiz', level.levelNumber]" class="btn btn-level">{{ t('dashboard.start') }}</a>
           <a *ngIf="isCompleted(level.levelNumber)"
-            [routerLink]="['/quiz', level.levelNumber]" class="btn btn-level btn-review">Review</a>
-          <button *ngIf="!isUnlocked(level.levelNumber)" class="btn btn-level btn-disabled" disabled>Locked</button>
+            [routerLink]="['/quiz', level.levelNumber]" class="btn btn-level btn-review">{{ t('dashboard.review') }}</a>
+          <button *ngIf="!isUnlocked(level.levelNumber)" class="btn btn-level btn-disabled" disabled>{{ t('dashboard.locked_btn') }}</button>
         </div>
       </div>
     </section>
@@ -55,9 +56,13 @@ export class DashboardComponent {
   levels: LevelData[];
   unlockedLevel: number;
 
-  constructor(private quiz: QuizService) {
+  constructor(private quiz: QuizService, public translate: TranslateService) {
     this.levels = this.quiz.getLevels();
     this.unlockedLevel = this.quiz.getUnlockedLevel();
+  }
+
+  t(key: string): string {
+    return this.translate.t(key);
   }
 
   isUnlocked(n: number): boolean { return this.quiz.isUnlocked(n); }

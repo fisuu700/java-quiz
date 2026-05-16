@@ -6,6 +6,7 @@ export interface Question {
   optionC: string;
   optionD: string;
   correctOption: string;
+  explanation?: string;
 }
 
 export interface LevelData {
@@ -26,4 +27,5 @@ export interface QuizResult {
   score: number;
   total: number;
   passed: boolean;
+  userAnswers: Record<number, string>;
 }
